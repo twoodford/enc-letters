@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>????</title>
+<script type="text/javascript" src="aes.js"></script>
+<style type="text/css">
+body, html, iframe {width: 100%; height: 100%; margin: 0; padding: 0}
+iframe { border: 0; }
+#auth { position: absolute; top: 50%; left: 50%; }
+#auth_inner { 
+    position: relative; left: -50%; top: -50%; border: dotted black 1px;
+}
+td { padding: 5px; }
+form { margin-block-end: 0; }
+</style>
+
+
+<!-- hi!  if you're reading this source code, there's not too much 
+    interesting here (by design...).  If I put anything interesting in 
+    the comments, it will go in the encrypted file, which will be a bit 
+    more involved to access from the developer tools -->
+</head>
+<body>
+
+<iframe id="wrap" src="javascript:void(0);"></iframe>
+
+<div id="auth">
+    <div id="auth_inner">
+    <form onsubmit="return false;">
+        <table>
+            <tr>
+                <td>Key</td>
+                <td>
+                    <input id="key"/>
+                </td>
+            <tr><td>&nbsp;</td>
+                <td>
+                    <button id="click">Unlock</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+function replaceIframeContent(iframeElement, newHTML)
+{
+    //iframeElement.src = "about:blank";
+    iframeElement.contentWindow.document.open();
+    iframeElement.contentWindow.document.write(newHTML);
+    iframeElement.contentWindow.document.close();
+}
+
+//testing key a0531d9162c5dbacd9109cfb1e89ac34b0f26f3eb1951ec0c7f5b9899fffff9e
+function decrypt() {
+console.log("decrypting");
+var key_hex = document.getElementById('key').value.trim();
+var key = aesjs.utils.hex.toBytes(key_hex);
+var iv = aesjs.utils.hex.toBytes("e466d5909c0dcc131c6751460e5a7f25");
+
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    var bytesEnc = aesjs.utils.hex.toBytes(this.response.trim());
+    var aesCbc = new aesjs.ModeOfOperation.cbc(key, iv);
+    var decryptedBytes = aesCbc.decrypt(bytesEnc);
+    var decryptedPage = aesjs.utils.utf8.fromBytes(decryptedBytes);
+    //document.getElementById('wrap').src = "data:text/html;charset=utf-8," + escape(decryptedPage);
+    //document.getElementById('wrap').innerHTML = decryptedPage;
+    //$("#wrap").contents().find('html').html(decryptedPage);
+    console.log(decryptedPage);
+    replaceIframeContent(document.getElementById('wrap'), decryptedPage);
+    document.getElementById('auth').style.visibility = 'hidden';
+}
+xhttp.open("GET", "mengming-1.hex", true);
+xhttp.send();
+}
+document.getElementById('click').onclick = decrypt;
+</script>
+
+</body>
