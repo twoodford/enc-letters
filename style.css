@@ -20,6 +20,12 @@ p.addr {
     font-size: 0.8em;
 }
 
+p.addr-to {
+    font-family: Montserrat;
+    font-weight: light;
+    font-size: 0.8em;
+}
+
 p.salutation {
     font-size: 1.3em;
     font-family: Montserrat;
@@ -29,7 +35,7 @@ p.salutation {
 
 div.body {
     border-left: 1px dotted #eee;
-    font-family: "Open Sans";
+    font-family: "Open Sans", "Helvetica Neue";
     font-weight: 300;
     font-size: 0.9em;
     padding-left: 3%;
